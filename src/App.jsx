@@ -108,7 +108,7 @@ function App() {
         </div>
         <div className="container">
           <nav className="nav">
-            <h1 className="logo">{profileData.name}</h1>
+            <h1 className="logo">Full Stack Developer</h1>
             <ul className="nav-links">
               <li><a href="#about">About</a></li>
               <li><a href="#experience">Experience</a></li>
