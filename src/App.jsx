@@ -6,6 +6,14 @@ import Particles from './Particles';
 function App() {
   const profilePic = '/robertgleim.png';
   
+  // Webhook URLs - toggle testMode to switch between production and test
+  const testMode = true; // Set to true to use test webhook
+  const webhookUrls = {
+    production: 'https://robert-gleim.app.n8n.cloud/webhook/ed5ba3bd-d6d2-4f64-bb67-c57a156e4d54',
+    test: 'https://robert-gleim.app.n8n.cloud/webhook-test/ed5ba3bd-d6d2-4f64-bb67-c57a156e4d54'
+  };
+  const activeWebhook = testMode ? webhookUrls.test : webhookUrls.production;
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -27,24 +35,33 @@ function App() {
     if (!chatInput.trim()) return;
 
     const userMessage = { role: 'user', content: chatInput };
+    const messageToSend = chatInput; // Store the message before clearing
     setChatMessages(prev => [...prev, userMessage]);
-    setChatInput('');
+    setChatInput(''); // Clear input after storing
     setIsChatLoading(true);
 
+    console.log('Sending to webhook:', activeWebhook);
+    console.log('Message payload:', { message: messageToSend });
+
     try {
-      const response = await fetch('https://robert-gleim.app.n8n.cloud/webhook/6245fd5c-a83a-457d-8d8d-1cb2468800b9/chat', {
+      const response = await fetch(activeWebhook, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: chatInput })
+        body: JSON.stringify({ message: messageToSend })
       });
+
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
 
       if (response.ok) {
         const data = await response.json();
-        const assistantMessage = { role: 'assistant', content: data.message || data.response || 'I received your message!' };
+        console.log('Response data:', data);
+        const assistantMessage = { role: 'assistant', content: data.answer || data.message || data.response || 'I received your message!' };
         setChatMessages(prev => [...prev, assistantMessage]);
       } else {
+        console.error('Response not ok:', response.status, response.statusText);
         const errorMessage = { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' };
         setChatMessages(prev => [...prev, errorMessage]);
       }
@@ -69,7 +86,7 @@ function App() {
     
     try {
       // Send data to n8n webhook
-      const response = await fetch('https://robert-gleim.app.n8n.cloud/webhook-test/7877241e-c442-444a-acb9-75371f2ee8cf', {
+      const response = await fetch(activeWebhook, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
