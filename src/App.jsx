@@ -4,6 +4,8 @@ import LiquidEther from './LiquidEther';
 import Particles from './Particles';
 
 function App() {
+  const profilePic = '/robertgleim.png';
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,9 +14,47 @@ function App() {
 
   const [formStatus, setFormStatus] = useState('');
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState('');
+  const [isChatLoading, setIsChatLoading] = useState(false);
 
   const toggleChatModal = () => {
     setIsChatModalOpen(!isChatModalOpen);
+  };
+
+  const handleChatSubmit = async (e) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+
+    const userMessage = { role: 'user', content: chatInput };
+    setChatMessages(prev => [...prev, userMessage]);
+    setChatInput('');
+    setIsChatLoading(true);
+
+    try {
+      const response = await fetch('https://robert-gleim.app.n8n.cloud/webhook/6245fd5c-a83a-457d-8d8d-1cb2468800b9/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: chatInput })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const assistantMessage = { role: 'assistant', content: data.message || data.response || 'I received your message!' };
+        setChatMessages(prev => [...prev, assistantMessage]);
+      } else {
+        const errorMessage = { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' };
+        setChatMessages(prev => [...prev, errorMessage]);
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      const errorMessage = { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' };
+      setChatMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsChatLoading(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -24,28 +64,65 @@ function App() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormStatus('Message sent successfully!');
-    setFormData({ name: '', email: '', message: '' });
+    
+    try {
+      // Send data to n8n webhook
+      const response = await fetch('https://robert-gleim.app.n8n.cloud/webhook-test/7877241e-c442-444a-acb9-75371f2ee8cf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+      
+      if (response.ok) {
+        setFormStatus('Message sent successfully!');
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        setFormStatus('Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      setFormStatus('Failed to send message. Please try again.');
+      console.error('Error sending message:', error);
+    }
+    
     setTimeout(() => setFormStatus(''), 3000);
   };
 
   const profileData = {
     name: "Robert Gleim",
     title: "Professional Profile",
-    tagline: "Innovative professional with expertise in technology and business solutions",
+    tagline: "Full Stack Developer passionate about building scalable, user-focused web solutions that drive business values.",
     about: "Dedicated professional with a strong background in leveraging technology to drive business outcomes. Passionate about continuous learning and applying cutting-edge solutions to real-world challenges.",
     linkedin: "www.linkedin.com/in/robert-gleim",
     github: "https://github.com/RobertGleim",
-    email: "contact@robertgleim.com",
+    email: "Rgleim0603@gmail.com",
     
     experience: [
       {
         title: "Professional Experience",
         company: "Various Organizations",
         period: "Career History",
-        description: "Extensive experience in technology implementation, project management, and business development. Skilled in identifying opportunities and delivering innovative solutions that drive growth and efficiency."
+        description: "Experienced software developer with expertise in Flask, React, SQL, and Python. Proven ability to deliver responsive web applications, manage cross-functional teams, and solve complex problems. Adept at project management, process improvement, and adapting to fast-paced environments."
+      },
+      {
+        title: "Software Engineer",
+        company: "Coding Temple",
+        period: "Jun 2025 – Dec 2025",
+        description: "• Developed full stack projects using React, Flask, Python, and SQL, demonstrating modern coding principles and best practices.\n• Created responsive web applications, integrating third-party APIs and adapting quickly to new technologies.\n• Consistently met deadlines and delivered high-quality solutions in a collaborative environment."
+      },
+      {
+        title: "Maintenance Manager",
+        company: "Lane Enterprises",
+        period: "Apr 2019 – May 2025",
+        description: "• Led process optimization initiatives, analyzing system failures and designing data-driven solutions that improved reliability and efficiency.\n• Developed structured procedures and documentation, reducing error rates and enabling knowledge transfer.\n• Collaborated with leadership, vendors, and technical teams to deliver scalable solutions while balancing performance, cost, and user experience.\n• Managed multiple concurrent projects, prioritized tasks, and mentored team members, resulting in increased productivity and adoption of new tools."
+      },
+      {
+        title: "Maintenance Supervisor",
+        company: "Lane Enterprises",
+        description: "• Promoted and helped define roles in the plant like operation leaders, as well as helped transition the production supervisor into his new position.\n• Maintained all repairs of facility while consistently looking for ways to improve and implementing any new procedures or product improvements.\n• Oversaw and installed a new production line to run small size pipe, including running water and vacuum pipes from the pump room."
       }
     ],
     
@@ -57,7 +134,12 @@ function App() {
       "AI & Automation",
       "n8n Workflows",
       "Problem Solving",
-      "Technical Leadership"
+      "Technical Leadership",
+      "HTML5 & CSS3",
+      "Flask & Python",
+      "SQL & Databases",
+      "API Integration",
+      
     ],
     
     education: [
@@ -143,6 +225,24 @@ function App() {
         <div className="container">
           <h2 className="section-title">About Me</h2>
           <p className="about-text">{profileData.about}</p>
+          
+          <div className="about-details">
+            <div className="about-detail-card">
+              <h3 className="about-detail-title">Education & Certifications</h3>
+              <ul className="about-detail-list">
+                <li>Coding Temple, Certificate – Software Engineering</li>
+                <li>Womack Hydraulics Training, Troubleshooting & Repairs</li>
+              </ul>
+            </div>
+            
+            <div className="about-detail-card">
+              <h3 className="about-detail-title">Additional Information</h3>
+              <ul className="about-detail-list">
+                <li><strong>Testing:</strong> pytest, unittest</li>
+                <li><strong>Soft Skills:</strong> Strong communication, leadership, and adaptability</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -262,14 +362,43 @@ function App() {
               <button onClick={toggleChatModal} className="close-modal-btn">&times;</button>
             </div>
             <div className="chat-modal-body">
-              <div className="chat-placeholder-content">
-                <p className="chat-placeholder-text">AI Chat Assistant</p>
-                <p className="chat-placeholder-subtext">Powered by n8n automation</p>
-                <div className="chat-info">
-                  <p>This is where your n8n-powered AI chat agent will be integrated.</p>
-                  <p>You can embed your chat widget here by adding the n8n webhook URL and chat interface.</p>
-                </div>
+              <div className="chat-messages">
+                {chatMessages.length === 0 ? (
+                  <div className="chat-placeholder-content">
+                    <p className="chat-placeholder-text">AI Chat Assistant</p>
+                    <p className="chat-placeholder-subtext">Powered by n8n automation</p>
+                    <p>Start a conversation by typing a message below.</p>
+                  </div>
+                ) : (
+                  chatMessages.map((msg, index) => (
+                    <div key={index} className={`chat-message ${msg.role}`}>
+                      {msg.role === 'assistant' && (
+                        <img src={profilePic} alt="AI Avatar" className="chat-avatar" />
+                      )}
+                      <div className="message-content">{msg.content}</div>
+                    </div>
+                  ))
+                )}
+                {isChatLoading && (
+                  <div className="chat-message assistant">
+                    <img src={profilePic} alt="AI Avatar" className="chat-avatar" />
+                    <div className="message-content">Typing...</div>
+                  </div>
+                )}
               </div>
+              <form onSubmit={handleChatSubmit} className="chat-input-form">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder="Type your message..."
+                  className="chat-input"
+                  disabled={isChatLoading}
+                />
+                <button type="submit" className="chat-send-btn" disabled={isChatLoading || !chatInput.trim()}>
+                  Send
+                </button>
+              </form>
             </div>
           </div>
         </>
