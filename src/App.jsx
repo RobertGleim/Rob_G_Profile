@@ -8,7 +8,7 @@ function App() {
   
   // Webhook URLs - separate webhooks for contact form and chatbot
   const contactWebhook = 'https://robert-gleim.app.n8n.cloud/webhook/7877241e-c442-444a-acb9-75371f2ee8cf';
-  const chatbotWebhook = 'https://robert-gleim.app.n8n.cloud/webhook-test/ed5ba3bd-d6d2-4f64-bb67-c57a156e4d54';
+  const chatbotWebhook = 'https://robert-gleim.app.n8n.cloud/webhook/ed5ba3bd-d6d2-4f64-bb67-c57a156e4d54';
   
   const [formData, setFormData] = useState({
     name: '',
