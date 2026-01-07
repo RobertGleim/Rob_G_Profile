@@ -6,13 +6,9 @@ import Particles from './Particles';
 function App() {
   const profilePic = '/robertgleim.png';
   
-  // Webhook URLs - toggle testMode to switch between production and test
-  const testMode = false; // Set to true to use test webhook
-  const webhookUrls = {
-    production: 'https://robert-gleim.app.n8n.cloud/webhook/ed5ba3bd-d6d2-4f64-bb67-c57a156e4d54',
-    test: 'https://robert-gleim.app.n8n.cloud/webhook-test/ed5ba3bd-d6d2-4f64-bb67-c57a156e4d54'
-  };
-  const activeWebhook = testMode ? webhookUrls.test : webhookUrls.production;
+  // Webhook URLs - separate webhooks for contact form and chatbot
+  const contactWebhook = 'https://robert-gleim.app.n8n.cloud/webhook/7877241e-c442-444a-acb9-75371f2ee8cf';
+  const chatbotWebhook = 'https://robert-gleim.app.n8n.cloud/webhook-test/ed5ba3bd-d6d2-4f64-bb67-c57a156e4d54';
   
   const [formData, setFormData] = useState({
     name: '',
@@ -40,11 +36,11 @@ function App() {
     setChatInput(''); // Clear input after storing
     setIsChatLoading(true);
 
-    console.log('Sending to webhook:', activeWebhook);
+    console.log('Sending to chatbot webhook:', chatbotWebhook);
     console.log('Message payload:', { message: messageToSend });
 
     try {
-      const response = await fetch(activeWebhook, {
+      const response = await fetch(chatbotWebhook, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,8 +83,8 @@ function App() {
     e.preventDefault();
     
     try {
-      // Send data to n8n webhook
-      const response = await fetch(activeWebhook, {
+      // Send data to contact form webhook
+      const response = await fetch(contactWebhook, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
