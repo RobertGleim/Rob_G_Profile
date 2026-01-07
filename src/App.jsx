@@ -7,7 +7,7 @@ function App() {
   const profilePic = '/robertgleim.png';
   
   // Webhook URLs - toggle testMode to switch between production and test
-  const testMode = true; // Set to true to use test webhook
+  const testMode = false; // Set to true to use test webhook
   const webhookUrls = {
     production: 'https://robert-gleim.app.n8n.cloud/webhook/ed5ba3bd-d6d2-4f64-bb67-c57a156e4d54',
     test: 'https://robert-gleim.app.n8n.cloud/webhook-test/ed5ba3bd-d6d2-4f64-bb67-c57a156e4d54'
