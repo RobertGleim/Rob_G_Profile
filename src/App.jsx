@@ -58,7 +58,9 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         console.log('Response data:', data);
-        const assistantMessage = { role: 'assistant', content: data.answer || data.message || data.response || 'I received your message!' };
+        // Handle different response formats
+        const responseText = data.message || data.response || data.answer || data.output || data.text || JSON.stringify(data);
+        const assistantMessage = { role: 'assistant', content: responseText };
         setChatMessages(prev => [...prev, assistantMessage]);
       } else {
         console.error('Response not ok:', response.status, response.statusText);
