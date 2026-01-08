@@ -211,6 +211,16 @@ function App() {
               <li><a href="#experience">Experience</a></li>
               <li><a href="#skills">Skills</a></li>
               <li><a href="#contact">Contact</a></li>
+              <li>
+                <a 
+                  href="/Robert_Gleim_Resume.pdf" 
+                  download="Robert_Gleim_Resume.pdf"
+                  className="btn btn-primary"
+                  style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
+                >
+                  Download Resume
+                </a>
+              </li>
             </ul>
           </nav>
           <div className="hero">

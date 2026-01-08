@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="white"/>
+  <g transform="translate(100, 90)">
+    <!-- Blue vertical bar -->
+    <rect x="0" y="0" width="100" height="350" fill="#0f3d7a"/>
+    
+    <!-- Black R curve -->
+    <path d="M 80 50 L 180 50 Q 300 50 300 150 Q 300 210 220 230 L 320 350 L 240 350 L 150 235 L 150 350 L 80 350 Z" fill="#1a1a1a"/>
+    
+    <!-- White inner space -->
+    <rect x="150" y="100" width="100" height="80" fill="white"/>
+    <path d="M 150 100 Q 250 100 250 150 Q 250 180 200 180 L 150 180 Z" fill="white"/>
+    
+    <!-- Blue curve accent -->
+    <path d="M 250 50 Q 340 50 340 140 Q 340 180 300 200" fill="none" stroke="#0f3d7a" stroke-width="15"/>
+  </g>
+</svg>
